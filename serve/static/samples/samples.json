@@ -1,0 +1,74 @@
+[
+ {
+  "file": "bottle-good.jpg",
+  "category": "bottle",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "bottle-broken_large.jpg",
+  "category": "bottle",
+  "truth": "defect",
+  "defect": "broken large"
+ },
+ {
+  "file": "screw-good.jpg",
+  "category": "screw",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "screw-thread_side.jpg",
+  "category": "screw",
+  "truth": "defect",
+  "defect": "thread side"
+ },
+ {
+  "file": "hazelnut-good.jpg",
+  "category": "hazelnut",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "hazelnut-crack.jpg",
+  "category": "hazelnut",
+  "truth": "defect",
+  "defect": "crack"
+ },
+ {
+  "file": "carpet-good.jpg",
+  "category": "carpet",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "carpet-hole.jpg",
+  "category": "carpet",
+  "truth": "defect",
+  "defect": "hole"
+ },
+ {
+  "file": "metal_nut-good.jpg",
+  "category": "metal_nut",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "metal_nut-scratch.jpg",
+  "category": "metal_nut",
+  "truth": "defect",
+  "defect": "scratch"
+ },
+ {
+  "file": "pill-good.jpg",
+  "category": "pill",
+  "truth": "good",
+  "defect": null
+ },
+ {
+  "file": "pill-crack.jpg",
+  "category": "pill",
+  "truth": "defect",
+  "defect": "crack"
+ }
+]

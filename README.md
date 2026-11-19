@@ -14,6 +14,10 @@ shows **where** each defect is. It compares two approaches on the same held-out 
 Experiments are tracked in **MLflow**, the models are exported to **ONNX**, and a
 **FastAPI** service with a web page takes a photo and returns pass/fail plus a heatmap.
 
+![The inspection page: a cracked hazelnut checked by both models, each heatmap with a drag-to-compare handle](docs/app.jpg)
+
+*The web app: pick a sample part or upload a photo, choose PatchCore, the CNN or both, and drag to compare the photo with the heatmap.*
+
 ![PatchCore and Grad-CAM heatmaps on defective screws, hazelnuts and carpet](docs/examples.png)
 
 *Each row: input, ground-truth defect mask, PatchCore heatmap, Grad-CAM heatmap (holdout images).*

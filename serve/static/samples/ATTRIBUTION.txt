@@ -1,0 +1,1 @@
+Sample images: MVTec AD test set, (c) MVTec Software GmbH, CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). Resized to 448 px. Non-commercial use only.

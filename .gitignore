@@ -9,3 +9,4 @@ mlruns/
 mlartifacts/
 *.zip
 mlflow.db
+.taste-skill/

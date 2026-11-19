@@ -4,93 +4,113 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defect Inspection</title>
-<style>
-  :root { --bg:#f3f3f0; --panel:#fff; --ink:#151617; --ink2:#5a5d62; --line:#e0e0db; --accent:#1f6feb; --pass:#1d7a46; --fail:#c0352b; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121314; --panel:#1b1c1e; --ink:#ececee; --ink2:#a4a7ad; --line:#2c2e31; --accent:#6ea8ff; --pass:#4cc282; --fail:#f0776c; } }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
-  main { max-width: 980px; margin: 0 auto; padding: 32px 16px 60px; }
-  h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.01em; }
-  .sub { color: var(--ink2); margin: 0 0 24px; }
-  form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; background: var(--panel); border:1px solid var(--line); border-radius: 12px; padding: 16px; }
-  label { display: grid; gap: 4px; font-size: 13px; color: var(--ink2); }
-  select, input[type=file] { font: inherit; padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--ink); min-width: 0; }
-  button { font: inherit; font-weight: 600; background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 9px 18px; cursor: pointer; }
-  button:disabled { opacity: .5; }
-  .result { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
-  .card img { width: 100%; border-radius: 8px; display: block; image-rendering: auto; }
-  .card h2 { margin: 0 0 10px; font-size: 14px; color: var(--ink2); font-weight: 600; }
-  .verdict { font-size: 34px; font-weight: 750; letter-spacing: .02em; }
-  .verdict.pass { color: var(--pass); } .verdict.fail { color: var(--fail); }
-  dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 12px 0 0; font-size: 14px; }
-  dt { color: var(--ink2); } dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .note { color: var(--ink2); font-size: 13px; margin-top: 12px; }
-  .err { color: var(--fail); margin-top: 16px; }
-  @media (max-width: 720px) { form { grid-template-columns: 1fr; } .result { grid-template-columns: 1fr; } }
-</style>
+<meta name="description" content="Visual defect inspection for industrial parts: upload a photo or pick a sample, get pass or fail and a heatmap of where the defect is.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
 </head>
 <body>
-<main>
-  <h1>Visual defect inspection</h1>
-  <p class="sub">Upload a photo of a part. The model says pass or fail and shows where it sees the defect.</p>
-  <form id="f">
-    <label>Part type <select id="category" required></select></label>
-    <label>Method
-      <select id="method">
-        <option value="patchcore">PatchCore (anomaly detection)</option>
-        <option value="cnn">ResNet-18 + Grad-CAM (classifier)</option>
-      </select>
-    </label>
-    <label>Photo <input type="file" id="file" accept="image/*" required></label>
-    <button id="go">Inspect</button>
-  </form>
-  <div id="err" class="err" role="alert"></div>
-  <div class="result" id="result" hidden>
-    <div class="card"><h2>Input</h2><img id="input" alt="Uploaded part"></div>
-    <div class="card"><h2>Heatmap</h2><img id="heat" alt="Defect heatmap overlaid on the part"></div>
-    <div class="card" style="grid-column: 1 / -1">
-      <div class="verdict" id="verdict"></div>
-      <dl>
-        <dt>Anomaly score</dt><dd id="score"></dd>
-        <dt>Decision threshold</dt><dd id="thr"></dd>
-        <dt>Method</dt><dd id="m"></dd>
-        <dt>Inference time</dt><dd id="lat"></dd>
-      </dl>
-      <p class="note">Red areas are where the part differs most from defect-free examples (PatchCore) or what drove the "defect" prediction (Grad-CAM). Images are centre-cropped to 224 × 224, as in training.</p>
-    </div>
-  </div>
-</main>
-<script>
-  const $ = (id) => document.getElementById(id);
-  fetch("/api/categories").then((r) => r.ok ? r.json() : Promise.reject(r)).then((cats) => {
-    $("category").innerHTML = cats.map((c) => `<option value="${c}">${c.replace("_", " ")}</option>`).join("");
-  }).catch(async (r) => { $("err").textContent = (await r.json?.())?.detail || "Models are not loaded."; });
+  <header class="bar">
+    <a class="brand" href="/">
+      <svg class="lens" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2.4"/>
+        <circle cx="16" cy="16" r="4.5" fill="var(--scan)"/>
+        <path d="M16 1.5v6M16 24.5v6M1.5 16h6M24.5 16h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <span>Defect Inspection</span>
+    </a>
+    <span class="bar-meta" id="bar-meta">Loading models…</span>
+    <a class="bar-link" href="https://github.com/alok-kul5/visual-defect-inspection">Source</a>
+  </header>
 
-  $("file").onchange = () => { const f = $("file").files[0]; if (f) $("input").src = URL.createObjectURL(f); };
-  $("f").onsubmit = async (e) => {
-    e.preventDefault();
-    $("err").textContent = "";
-    $("go").disabled = true;
-    const body = new FormData();
-    body.append("file", $("file").files[0]);
-    body.append("category", $("category").value);
-    body.append("method", $("method").value);
-    try {
-      const r = await fetch("/api/inspect", { method: "POST", body });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.detail || r.statusText);
-      $("heat").src = "data:image/png;base64," + d.heatmap_png_base64;
-      $("verdict").textContent = d.verdict.toUpperCase();
-      $("verdict").className = "verdict " + d.verdict;
-      $("score").textContent = d.score.toFixed(3);
-      $("thr").textContent = d.threshold.toFixed(3);
-      $("m").textContent = d.method === "patchcore" ? "PatchCore" : "ResNet-18 + Grad-CAM";
-      $("lat").textContent = d.latency_ms + " ms";
-      $("result").hidden = false;
-    } catch (err) { $("err").textContent = err.message; }
-    finally { $("go").disabled = false; }
-  };
-</script>
+  <main class="wrap">
+    <section class="intro rise">
+      <h1>Visual defect inspection</h1>
+      <p class="lede">Upload a photo of a part, or pick a sample below. The model says pass or fail and shows where it sees the defect.</p>
+    </section>
+
+    <section class="bench rise" aria-label="Inspection">
+      <div class="stage" id="stage">
+        <label class="drop" id="drop" for="file">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 31V13m0 0-7 7m7-7 7 7M10 33v3a3 3 0 0 0 3 3h22a3 3 0 0 0 3-3v-3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <strong>Drop a photo here</strong>
+          <span>or click to choose one · PNG or JPG, up to 10 MB</span>
+          <input type="file" id="file" accept="image/*">
+        </label>
+        <div class="views" id="views" hidden>
+          <div class="view" id="view-a">
+            <div class="compare" id="cmp-a">
+              <img class="before" alt="The part as inspected (centre crop)">
+              <div class="after-wrap"><img class="after" alt="Heatmap of where the model sees a defect"></div>
+              <div class="handle" aria-hidden="true"><span></span></div>
+              <input class="slider" type="range" min="0" max="100" value="100" aria-label="Compare photo and heatmap">
+              <div class="scanline" aria-hidden="true"></div>
+              <div class="stamp" aria-live="polite"></div>
+            </div>
+            <p class="view-label"></p>
+          </div>
+          <div class="view" id="view-b" hidden>
+            <div class="compare" id="cmp-b">
+              <img class="before" alt="The part as inspected (centre crop)">
+              <div class="after-wrap"><img class="after" alt="Grad-CAM heatmap"></div>
+              <div class="handle" aria-hidden="true"><span></span></div>
+              <input class="slider" type="range" min="0" max="100" value="100" aria-label="Compare photo and heatmap">
+              <div class="scanline" aria-hidden="true"></div>
+              <div class="stamp" aria-live="polite"></div>
+            </div>
+            <p class="view-label"></p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="controls" aria-label="Settings and result">
+        <div class="field">
+          <label for="category">Part type</label>
+          <select id="category"></select>
+        </div>
+        <div class="field">
+          <span class="field-label" id="method-label">Model</span>
+          <div class="seg" role="radiogroup" aria-labelledby="method-label">
+            <button type="button" role="radio" data-method="patchcore" aria-checked="true">PatchCore</button>
+            <button type="button" role="radio" data-method="cnn" aria-checked="false">CNN</button>
+            <button type="button" role="radio" data-method="both" aria-checked="false">Both</button>
+          </div>
+        </div>
+        <button class="go" id="go" type="button" disabled>Inspect</button>
+        <button class="again" id="again" type="button" hidden>Choose another photo</button>
+        <p class="err" id="err" role="alert"></p>
+
+        <div class="result" id="result" hidden>
+          <div class="score" id="score-a"></div>
+          <div class="score" id="score-b" hidden></div>
+        </div>
+
+        <div class="context" id="context"></div>
+      </aside>
+    </section>
+
+    <section class="samples rise" aria-labelledby="samples-h">
+      <div class="samples-head">
+        <h2 id="samples-h">Try a sample part</h2>
+        <p>Real parts from the MVTec AD test set. Half of them have a defect.</p>
+      </div>
+      <div class="sample-grid" id="samples"></div>
+    </section>
+
+    <section class="how rise" aria-labelledby="how-h">
+      <h2 id="how-h">How it decides</h2>
+      <div class="how-grid">
+        <p><strong>PatchCore</strong> never sees a defect. It remembers what thousands of small patches of good parts look like, and flags any patch that is far from all of them. The heatmap is that distance.</p>
+        <p><strong>The CNN</strong> is a ResNet-18 trained on good and defective examples. Its heatmap is Grad-CAM: the parts of the image that pushed it towards "defect".</p>
+        <p><strong>The threshold</strong> was chosen per part type on a calibration set, and the scores above were measured on separate holdout images. Both models run here on ONNX Runtime, on the CPU.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Sample images and training data: <a href="https://www.mvtec.com/company/research/datasets/mvtec-ad">MVTec AD</a>, © MVTec Software GmbH, <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>.</p>
+  </footer>
 </body>
 </html>

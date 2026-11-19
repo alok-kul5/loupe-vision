@@ -12,6 +12,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from defect.inference import Inspector
 
@@ -63,3 +64,7 @@ async def inspect(file: UploadFile = File(...), category: str = Form(...), metho
 @app.get("/", include_in_schema=False)
 def page():
     return FileResponse(Path(__file__).parent / "index.html")
+
+
+# Page assets, sample parts (MVTec AD, CC BY-NC-SA 4.0) and the benchmark table.
+app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
