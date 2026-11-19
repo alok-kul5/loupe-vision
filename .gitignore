@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+data/
+models/
+models_onnx/
+mlruns/
+mlartifacts/
+*.zip
+mlflow.db

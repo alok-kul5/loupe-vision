@@ -1,0 +1,8 @@
+# Everything the API needs at runtime. No PyTorch.
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+python-multipart
+onnxruntime
+numpy
+scipy
+pillow

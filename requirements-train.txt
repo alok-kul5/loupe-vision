@@ -1,0 +1,11 @@
+# Install PyTorch first, with CUDA if you have an NVIDIA GPU:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+-r requirements-serve.txt
+scikit-learn
+mlflow
+matplotlib
+onnx
+onnxscript
+pytest
+httpx
+ruff
