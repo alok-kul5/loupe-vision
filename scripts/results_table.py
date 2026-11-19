@@ -57,13 +57,15 @@ cnn_wins = [c for c in cats if m[c]["cnn"]["image_auroc"] > m[c]["patchcore"]["i
 weak = ", ".join(f"{c} ({f(m[c]['patchcore']['image_auroc'])})" for c in worst_pc)
 lines.append(f"**Where PatchCore is weakest:** {weak}.")
 if cnn_wins:
-    lines.append(f"The classifier beats it on image AUROC in: {', '.join(cnn_wins)}, all categories where it trained on examples of the same defect types.")
+    lines.append(f"The classifier beats it on image AUROC in: {', '.join(cnn_wins)}, "
+                 "all categories where it trained on examples of the same defect types.")
 else:
     lines.append("The classifier never beats it on image AUROC, despite having trained on real defects.")
 print("\n".join(lines))
 
 # Collage of example figures for the README.
-figs = [ROOT / "results" / "examples" / f"{c}.png" for c in ("screw", "hazelnut", "carpet") if (ROOT / "results" / "examples" / f"{c}.png").exists()]
+EXAMPLES = ROOT / "results" / "examples"
+figs = [EXAMPLES / f"{c}.png" for c in ("screw", "hazelnut", "carpet") if (EXAMPLES / f"{c}.png").exists()]
 if figs:
     ims = [Image.open(p).convert("RGB") for p in figs]
     w = max(i.width for i in ims)
