@@ -1,6 +1,10 @@
-# Visual Defect Inspection
+<p align="center"><img src="docs/brand/mark.svg" width="88" height="88" alt="Loupe logo"></p>
 
-[![CI](https://github.com/alok-kul5/visual-defect-inspection/actions/workflows/ci.yml/badge.svg)](https://github.com/alok-kul5/visual-defect-inspection/actions/workflows/ci.yml)
+<h1 align="center">Loupe</h1>
+
+<p align="center"><b>Sees the scratch before your customer does.</b><br>Visual defect inspection for industrial parts: PatchCore anomaly detection against a fine-tuned CNN with Grad-CAM, served with ONNX Runtime.</p>
+
+[![CI](https://github.com/alok-kul5/loupe-vision/actions/workflows/ci.yml/badge.svg)](https://github.com/alok-kul5/loupe-vision/actions/workflows/ci.yml)
 
 Detects scratches, cracks, dents, contamination and other defects on industrial parts in
 the [MVTec AD](https://www.mvtec.com/company/research/datasets/mvtec-ad) benchmark, and
@@ -178,3 +182,7 @@ MVTec AD is © MVTec Software GmbH and licensed under
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). It is not included
 in this repository. The example figures are derived from it and shared under the same
 licence. The code is MIT.
+
+---
+
+<sub>One of six projects by [Alok Kulkarni](https://alok.is-a.dev): [Hearth](https://github.com/alok-kul5/hearth-iot) home sensors · [Headway](https://github.com/alok-kul5/headway-transit) transit data · [Vigil](https://github.com/alok-kul5/vigil-soc) security triage · **Loupe** defect inspection · [Kharcha](https://github.com/alok-kul5/kharcha-finance) personal finance · [Stockroom](https://github.com/alok-kul5/stockroom-inventory) inventory.</sub>

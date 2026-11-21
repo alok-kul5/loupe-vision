@@ -10,7 +10,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-REPO = "alok-kul5/visual-defect-inspection"
+REPO = "alok-kul5/loupe-vision"
 DEST = Path(__file__).resolve().parent.parent / "models_onnx"
 
 p = argparse.ArgumentParser()
